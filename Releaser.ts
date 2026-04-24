@@ -6,6 +6,7 @@ import FormData from 'form-data';
 import Axios, { AxiosInstance } from 'axios';
 import * as Luaparse from 'luaparse';
 import * as ChanglogParser from 'changelog-parser';
+import semver from 'semver';
 import Projector, { ProjectMode } from './Projector.ts';
 import Zipper from './Zipper.ts';
 import Storage, { Configurations } from './Storage.ts';
@@ -469,6 +470,10 @@ export default class Releaser {
             Output.println(`准备发布${info.name}工程:`, info.id);
 
             const oldInfo = await this.getProjectInfo(info.id, info.target);
+            if (semver.lte(version, oldInfo.version)) {
+                throw Error('发布版本号必须大于当前版本号');
+            }
+
             const uploadKey = await this.uploadProject(zip, oldInfo, info.target);
             await this.updateProject(oldInfo, version, changelog, uploadKey, info.target);
             const newInfo = await this.getProjectInfo(info.id, info.target);

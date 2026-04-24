@@ -4,6 +4,7 @@
         "axios": "npm:axios@^1.13.2",
         "luaparse": "npm:luaparse@^0.3.1",
         "changelog-parser": "npm:changelog-parser@^2.8.1",
-        "jszip": "npm:jszip@^3.10.1"
+        "jszip": "npm:jszip@^3.10.1",
+        "semver": "npm:semver@^7.7.4"
     }
 }

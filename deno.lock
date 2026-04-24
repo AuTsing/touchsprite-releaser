@@ -7,7 +7,8 @@
       "npm:changelog-parser@^2.8.1": "npm:changelog-parser@2.8.1",
       "npm:form-data@^4.0.0": "npm:form-data@4.0.5",
       "npm:jszip@^3.10.1": "npm:jszip@3.10.1",
-      "npm:luaparse@^0.3.1": "npm:luaparse@0.3.1"
+      "npm:luaparse@^0.3.1": "npm:luaparse@0.3.1",
+      "npm:semver@^7.7.4": "npm:semver@7.7.4"
     },
     "npm": {
       "@types/node@18.16.19": {
@@ -224,6 +225,10 @@
       },
       "safe-buffer@5.1.2": {
         "integrity": "sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==",
+        "dependencies": {}
+      },
+      "semver@7.7.4": {
+        "integrity": "sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==",
         "dependencies": {}
       },
       "setimmediate@1.0.5": {

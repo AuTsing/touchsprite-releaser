@@ -4,6 +4,7 @@ import * as Path from 'node:path';
 import Jszip from 'jszip';
 import { TsFile } from './Device.ts';
 import Projector, { ProjectMode } from './Projector.ts';
+import Output from './Output.ts';
 import Storage from './Storage.ts';
 
 export default class Zipper extends Jszip {
@@ -44,10 +45,10 @@ export default class Zipper extends Jszip {
             const filename = Path.basename(root) + '.zip';
             const url = await this.zip(dir, filename);
 
-            console.log('打包工程成功:', url);
+            Output.println('打包工程成功:', url);
             return url;
         } catch (e) {
-            console.error('打包工程失败:', (e as Error).message ?? e);
+            Output.eprintln('打包工程失败:', (e as Error).message ?? e);
             return '';
         }
     }

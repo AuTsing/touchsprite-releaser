@@ -21,6 +21,7 @@ import {
     TS_UPDATE_URL,
     TS_UPLOAD_URL,
 } from './Constants.ts';
+import Output from './Output.ts';
 
 interface LuaconfigInfo {
     ID: string | null;
@@ -234,7 +235,7 @@ export default class Releaser {
 
         const cookie = this.storage.getStringConfiguration(Configurations.Cookie);
         if (cookie === '') {
-            throw new Error('未设置 Cookie');
+            throw new Error('获取发布 Cookie 失败');
         }
 
         const resp = await this.loginer.get(TS_LOGIN_URL, {
@@ -378,7 +379,7 @@ export default class Releaser {
         const modifiedTitle = title.replace('latest', ver);
         const changelog = `${modifiedTitle}\n${body}`;
 
-        console.log('读取更新日志成功:', modifiedTitle);
+        Output.println('读取更新日志成功:', modifiedTitle);
         return changelog;
     }
 
@@ -465,20 +466,20 @@ export default class Releaser {
 
     private async releaseProject(zip: string, version: string, changelog: string, info: ReleaseInfo) {
         try {
-            console.log(`准备发布${info.name}工程:`, info.id);
+            Output.println(`准备发布${info.name}工程:`, info.id);
 
             const oldInfo = await this.getProjectInfo(info.id, info.target);
             const uploadKey = await this.uploadProject(zip, oldInfo, info.target);
             await this.updateProject(oldInfo, version, changelog, uploadKey, info.target);
             const newInfo = await this.getProjectInfo(info.id, info.target);
 
-            console.log(
+            Output.println(
                 `发布工程${info.name}(${info.id})成功:`,
                 `${newInfo.name}(${info.id})`,
                 `${oldInfo.version} -> ${newInfo.version}`,
             );
         } catch (e) {
-            console.log(`发布工程${info.name}(${info.id})失败:`, (e as Error).message ?? e);
+            Output.eprintln(`发布工程${info.name}(${info.id})失败:`, (e as Error).message ?? e);
         }
     }
 
@@ -516,8 +517,7 @@ export default class Releaser {
                 await this.releaseProject(zip, luaconfig.VERSION, changelog, info);
             }
         } catch (e) {
-            console.log('发布工程失败:', (e as Error).message ?? e);
-            console.error((e as Error).stack ?? e);
+            Output.eprintln('发布工程失败:', (e as Error).message ?? e);
         }
     }
 }

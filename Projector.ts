@@ -3,6 +3,7 @@ import * as Fs from 'node:fs';
 import * as Path from 'node:path';
 import { TsFile, TsFileRoot } from './Device.ts';
 import Storage, { Configurations } from './Storage.ts';
+import Output from './Output.ts';
 
 export enum ProjectMode {
     send = 'send',
@@ -76,7 +77,7 @@ export default class Projector {
             if (Fs.existsSync(it)) {
                 return true;
             } else {
-                console.log('忽略不可用路径:', it);
+                Output.wprintln('忽略不可用路径:', it);
                 return false;
             }
         });

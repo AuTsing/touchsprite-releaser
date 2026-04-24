@@ -15,22 +15,12 @@ export default class Storage {
         switch (key) {
             case Configurations.Cookie:
                 return Deno.env.get('COOKIE') ?? '';
-            case Configurations.AccessKey:
-                return Deno.env.get('ACCESS_KEY') ?? '';
-            case Configurations.SnapOrient:
-                return '';
-            case Configurations.SnapDir:
-                return '';
         }
         throw Error('未定义的设置项');
     }
 
     getStringArrayConfiguration(key: Configurations): string[] {
         switch (key) {
-            case Configurations.IncludeWhenSend:
-                return [];
-            case Configurations.ExcludeWhenSend:
-                return [];
             case Configurations.IncludeWhenZip: {
                 const filesStr = Deno.env.get('INCLUDE_WHEN_ZIP');
                 const files = [];
@@ -51,11 +41,7 @@ export default class Storage {
         throw Error('未定义的设置项');
     }
 
-    getBooleanConfiguration(key: Configurations): boolean {
-        switch (key) {
-            case Configurations.IsIosPersonal:
-                return false;
-        }
+    getBooleanConfiguration(_key: Configurations): boolean {
         throw Error('未定义的设置项');
     }
 }

@@ -483,7 +483,7 @@ export default class Releaser {
         }
     }
 
-    async handleRelease() {
+    async doRelease() {
         try {
             const projector = new Projector(this.storage, undefined, ProjectMode.zip);
             const root = await projector.locateRoot();
@@ -518,6 +518,7 @@ export default class Releaser {
             }
         } catch (e) {
             Output.eprintln('发布工程失败:', (e as Error).message ?? e);
+            throw e;
         }
     }
 }

@@ -530,7 +530,7 @@ export default class Releaser {
             }
 
             if (results.some(it => it instanceof Error)) {
-                const message = results.map((it, i) => `${i + 1}: ${it}`).join(',');
+                const message = results.map((it, i) => `${i + 1}: ${it}`).join(', ');
                 throw new Error(message);
             }
         } catch (e) {

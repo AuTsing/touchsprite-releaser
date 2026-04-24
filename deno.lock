@@ -254,7 +254,8 @@
       "npm:changelog-parser@^2.8.1",
       "npm:form-data@^4.0.0",
       "npm:jszip@^3.10.1",
-      "npm:luaparse@^0.3.1"
+      "npm:luaparse@^0.3.1",
+      "npm:semver@^7.7.4"
     ]
   }
 }

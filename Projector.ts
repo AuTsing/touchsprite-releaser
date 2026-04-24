@@ -1,0 +1,98 @@
+import * as FsPromises from 'node:fs/promises';
+import * as Fs from 'node:fs';
+import * as Path from 'node:path';
+import { TsFile, TsFileRoot } from './Device.ts';
+import Storage, { Configurations } from './Storage.ts';
+
+export enum ProjectMode {
+    send = 'send',
+    zip = 'zip',
+}
+
+export interface CollectedFile {
+    root: string;
+    url: string;
+    dir: string;
+    filename: string;
+}
+
+export default class Projector {
+    private readonly storage: Storage;
+    private readonly mainFilename: string;
+    private readonly projectMode: ProjectMode;
+    private readonly includes: string[];
+    private readonly excludes: string[];
+
+    constructor(storage: Storage, mainFilename: string = 'main.lua', projectMode: ProjectMode = ProjectMode.send) {
+        this.storage = storage;
+        this.mainFilename = mainFilename;
+        this.projectMode = projectMode;
+
+        switch (this.projectMode) {
+            case ProjectMode.send:
+                this.includes = this.storage.getStringArrayConfiguration(Configurations.IncludeWhenSend);
+                this.excludes = this.storage.getStringArrayConfiguration(Configurations.ExcludeWhenSend);
+                break;
+            case ProjectMode.zip:
+                this.includes = this.storage.getStringArrayConfiguration(Configurations.IncludeWhenZip);
+                this.excludes = this.storage.getStringArrayConfiguration(Configurations.ExcludeWhenZip);
+                break;
+        }
+    }
+
+    async locateRoot(): Promise<string> {
+        const dir = Path.resolve('.');
+        const files = await FsPromises.readdir(dir);
+        if (files.includes(this.mainFilename)) {
+            return dir;
+        }
+
+        throw new Error('所指定工程不包含引导文件 ' + this.mainFilename);
+    }
+
+    private async collectFiles(root: string, dir: string, container: CollectedFile[]) {
+        const files = await FsPromises.readdir(dir);
+        for (const file of files) {
+            if (this.excludes.includes(file)) {
+                continue;
+            }
+
+            const url = Path.join(dir, file);
+            const stat = await FsPromises.stat(url);
+
+            if (stat.isDirectory()) {
+                await this.collectFiles(root, url, container);
+            }
+
+            if (stat.isFile()) {
+                container.push({ root, url, dir, filename: file });
+            }
+        }
+    }
+
+    async generate(): Promise<TsFile[]> {
+        const root = await this.locateRoot();
+        const paths = [...this.includes, root].filter(it => {
+            if (Fs.existsSync(it)) {
+                return true;
+            } else {
+                console.log('忽略不可用路径:', it);
+                return false;
+            }
+        });
+        const files: CollectedFile[] = [];
+        for (const path of paths) {
+            await this.collectFiles(path, path, files);
+        }
+        const tsFiles: TsFile[] = files.map(file => {
+            const url = file.url;
+            const isLua = Path.extname(file.filename) === '.lua' || Path.extname(file.filename) === '.so';
+            const root = isLua ? TsFileRoot.lua : TsFileRoot.res;
+            const path = Path.join('/', Path.relative(file.root, file.dir)).replace(/\\/g, '/');
+            const filename = file.filename;
+            const tsFile: TsFile = { url, root, path, filename };
+            return tsFile;
+        });
+        return tsFiles;
+    }
+}

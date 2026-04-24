@@ -42,7 +42,8 @@ export default class Projector {
     }
 
     async locateRoot(): Promise<string> {
-        const dir = Path.resolve('.');
+        const projectPath = Deno.env.get('PROJECT_PATH') ?? '.';
+        const dir = Path.resolve(projectPath);
         const files = await FsPromises.readdir(dir);
         if (files.includes(this.mainFilename)) {
             return dir;

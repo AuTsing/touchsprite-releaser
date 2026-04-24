@@ -485,6 +485,7 @@ export default class Releaser {
             );
         } catch (e) {
             Output.eprintln(`发布工程${info.name}(${info.id})失败:`, (e as Error).message ?? e);
+            throw e;
         }
     }
 
@@ -518,8 +519,19 @@ export default class Releaser {
 
             const releaseInfos = toReleaseInfos.call(luaconfig);
 
+            const results = [];
             for (const info of releaseInfos) {
-                await this.releaseProject(zip, luaconfig.VERSION, changelog, info);
+                try {
+                    await this.releaseProject(zip, luaconfig.VERSION, changelog, info);
+                    results.push('ok');
+                } catch (e) {
+                    results.push(e);
+                }
+            }
+
+            if (results.some(it => it instanceof Error)) {
+                const message = results.map((it, i) => `${i + 1}: ${it}`).join(',');
+                throw new Error(message);
             }
         } catch (e) {
             Output.eprintln('发布工程失败:', (e as Error).message ?? e);

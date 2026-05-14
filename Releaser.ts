@@ -211,7 +211,7 @@ export default class Releaser {
     constructor(storage: Storage) {
         this.storage = storage;
         this.loginer = Axios.create({
-            timeout: 30000,
+            timeout: 60000,
             maxRedirects: 0,
         });
         this.loginer.interceptors.response.use(
@@ -225,7 +225,7 @@ export default class Releaser {
             },
         );
         this.updater = Axios.create({
-            timeout: 30000,
+            timeout: 60000,
         });
     }
 

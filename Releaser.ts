@@ -529,6 +529,7 @@ export default class Releaser {
                         results.push('ok');
                         break;
                     } catch (e) {
+                        Output.eprintln('发布工程失败:', (e as Error).message ?? e);
                         if (tried >= 3) {
                             results.push(e);
                         }

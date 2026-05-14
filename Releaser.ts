@@ -521,11 +521,18 @@ export default class Releaser {
 
             const results = [];
             for (const info of releaseInfos) {
-                try {
-                    await this.releaseProject(zip, luaconfig.VERSION, changelog, info);
-                    results.push('ok');
-                } catch (e) {
-                    results.push(e);
+                let tried = 0;
+                while (tried < 3) {
+                    try {
+                        tried++;
+                        await this.releaseProject(zip, luaconfig.VERSION, changelog, info);
+                        results.push('ok');
+                        break;
+                    } catch (e) {
+                        if (tried >= 3) {
+                            results.push(e);
+                        }
+                    }
                 }
             }
 

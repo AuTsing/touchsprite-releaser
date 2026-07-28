@@ -1,3 +1,4 @@
 .venv
 tmp
 out.zip
+node_modules
